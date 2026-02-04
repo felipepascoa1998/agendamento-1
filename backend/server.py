@@ -791,7 +791,40 @@ async def reschedule_appointment(
         if user.role != "admin" and appointment.get("client_user_id") != user.user_id:
             raise HTTPException(status_code=403, detail="Acesso negado")
     
-    # Check for conflicts
+    # Check for blocked times
+    blocked = await db.blocked_times.find(
+        {
+            "tenant_id": tenant["tenant_id"],
+            "employee_id": appointment["employee_id"],
+            "date": date
+        },
+        {"_id": 0}
+    ).to_list(100)
+    
+    # Check for whole day block
+    for block in blocked:
+        if block.get("is_whole_day"):
+            raise HTTPException(status_code=400, detail="Este dia está bloqueado para o funcionário")
+    
+    # Check for specific time blocks
+    time_hour, time_min = map(int, time.split(":"))
+    time_minutes = time_hour * 60 + time_min
+    service_duration = appointment.get("service_duration", 30)
+    time_end_minutes = time_minutes + service_duration
+    
+    for block in blocked:
+        if block.get("start_time") and block.get("end_time"):
+            block_start = int(block["start_time"].split(":")[0]) * 60 + int(block["start_time"].split(":")[1])
+            block_end = int(block["end_time"].split(":")[0]) * 60 + int(block["end_time"].split(":")[1])
+            
+            # Check if appointment overlaps with blocked time
+            if time_minutes < block_end and time_end_minutes > block_start:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"Horário bloqueado ({block.get('reason', 'indisponível')})"
+                )
+    
+    # Check for conflicts with other appointments
     existing = await db.appointments.find_one({
         "tenant_id": tenant["tenant_id"],
         "employee_id": appointment["employee_id"],
