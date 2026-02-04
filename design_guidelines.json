@@ -1,0 +1,177 @@
+{
+  "identity": {
+    "name": "E1",
+    "role": "Creative Designer",
+    "vibe": "Organic, Elegant, Trustworthy, High-End",
+    "principles": [
+      "Fusion over Imitation",
+      "Emotion First",
+      "Content is King",
+      "Zoom In",
+      "Negative Space",
+      "Contrast"
+    ]
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Playfair Display, serif",
+      "weights": ["400", "600", "700"],
+      "usage": "Main headings (h1, h2, h3). Use for emotional impact.",
+      "letter_spacing": "tracking-tight"
+    },
+    "body": {
+      "font_family": "Manrope, sans-serif",
+      "weights": ["400", "500", "600"],
+      "usage": "Body text, UI elements, buttons, inputs.",
+      "letter_spacing": "tracking-normal"
+    },
+    "mono": {
+      "font_family": "JetBrains Mono, monospace",
+      "usage": "Code snippets, technical data (if any)."
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "DEFAULT": "#2C4A3B",
+        "foreground": "#FFFFFF",
+        "description": "Deep Forest Green - Trust, Nature, Professionalism"
+      },
+      "secondary": {
+        "DEFAULT": "#E8E4D9",
+        "foreground": "#2C4A3B",
+        "description": "Warm Beige - Softness, Backgrounds, Secondary Actions"
+      },
+      "accent": {
+        "DEFAULT": "#D4A373",
+        "foreground": "#FFFFFF",
+        "description": "Soft Bronze/Gold - Highlights, CTAs, Premium feel"
+      },
+      "background": {
+        "DEFAULT": "#FFFCF8",
+        "description": "Bone White - Warmer than pure white, easier on eyes"
+      },
+      "foreground": {
+        "DEFAULT": "#1A1A1A",
+        "description": "Soft Black - High contrast but not harsh"
+      },
+      "muted": {
+        "DEFAULT": "#F5F2EB",
+        "foreground": "#78716C",
+        "description": "Light Stone - Borders, dividers, disabled states"
+      },
+      "card": {
+        "DEFAULT": "#FFFFFF",
+        "foreground": "#1A1A1A"
+      },
+      "destructive": {
+        "DEFAULT": "#EF4444",
+        "foreground": "#FFFFFF"
+      }
+    },
+    "gradients": {
+      "subtle_overlay": "linear-gradient(to bottom, rgba(255,252,248,0) 0%, #FFFCF8 100%)",
+      "hero_glow": "radial-gradient(circle at 50% 50%, rgba(212, 163, 115, 0.15), transparent 70%)"
+    }
+  },
+  "layout_strategy": {
+    "spacing": {
+      "base_scale": "Use 2-3x standard Tailwind spacing (e.g., p-8 instead of p-4)",
+      "container_padding": "px-6 md:px-12 lg:px-24",
+      "section_gap": "gap-16 md:gap-24"
+    },
+    "grids": {
+      "marketing": "Mode A (Tetris Grid) - Asymmetric, overlapping elements.",
+      "dashboard": "Mode B (High Density) - grid-cols-1 md:grid-cols-3 lg:grid-cols-4. Tight gaps (gap-6).",
+      "booking_flow": "Single column centered (max-w-md) for focus, or split screen (Service List | Summary) on desktop."
+    },
+    "border_radius": {
+      "default": "rounded-lg",
+      "buttons": "rounded-full",
+      "cards": "rounded-xl"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 py-6 text-lg font-medium transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl",
+      "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full px-6 py-4 font-medium",
+      "outline": "border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-full px-6 py-4 font-medium"
+    },
+    "cards": {
+      "style": "bg-card border border-muted shadow-sm hover:shadow-md transition-all duration-300 rounded-xl p-6",
+      "hover_effect": "hover:-translate-y-1"
+    },
+    "inputs": {
+      "style": "bg-transparent border-b-2 border-muted focus:border-primary rounded-none px-0 py-3 focus:ring-0 transition-colors placeholder:text-muted-foreground/50"
+    },
+    "navigation": {
+      "style": "backdrop-blur-md bg-background/80 border-b border-muted/50 sticky top-0 z-50"
+    }
+  },
+  "visual_assets": {
+    "images": {
+      "hero_bg": {
+        "url": "https://images.unsplash.com/photo-1611211235015-e2e3a7d09e97?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Modern salon interior with warm lighting",
+        "usage": "Landing page hero background or main visual"
+      },
+      "service_hair": {
+        "url": "https://images.unsplash.com/photo-1761931403671-d020a14928d9?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Professional haircut service",
+        "usage": "Service category card: Hair"
+      },
+      "service_spa": {
+        "url": "https://images.unsplash.com/photo-1630595632518-8217c0bceb8f?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Relaxing spa massage",
+        "usage": "Service category card: Spa/Massage"
+      },
+      "service_nails": {
+        "url": "https://images.unsplash.com/photo-1639162906614-0603b0ae95fd?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Manicure and pedicure service",
+        "usage": "Service category card: Nails"
+      },
+      "staff_1": {
+        "url": "https://images.unsplash.com/photo-1511920771146-1a7271092231?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Senior Stylist",
+        "usage": "Staff profile or testimonial"
+      },
+      "decorative_plant": {
+        "url": "https://images.unsplash.com/photo-1676536162793-faa565d976d4?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Minimalist plant decor",
+        "usage": "Decorative element in empty states or 404 pages"
+      }
+    },
+    "icons": {
+      "library": "lucide-react",
+      "style": "Stroke width 1.5px for elegance. Use 'primary' color."
+    }
+  },
+  "motion": {
+    "transitions": "transition-all duration-300 ease-out",
+    "hover": "hover:scale-[1.02] active:scale-[0.98]",
+    "entrance": "animate-in fade-in slide-in-from-bottom-4 duration-700"
+  },
+  "accessibility": {
+    "contrast": "Ensure text is #1A1A1A on light backgrounds. Use #2C4A3B for large text only.",
+    "focus": "focus:ring-2 focus:ring-primary focus:ring-offset-2",
+    "aria": "All interactive elements must have aria-labels if no text is present."
+  },
+  "instructions_to_main_agent": [
+    "INSTALL FONTS: Add '@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Playfair+Display:wght@400;600;700&display=swap');' to index.css",
+    "UPDATE TAILWIND: Configure the colors in tailwind.config.js to match the palette above.",
+    "USE SHADCN: Use Shadcn components but OVERRIDE the default styles to match the 'Organic & Earthy' aesthetic (rounded-xl, warm colors).",
+    "NO DEFAULT BLUE: Do not use the default blue color. Use the Forest Green (#2C4A3B) as the primary brand color.",
+    "LOGIN PAGE: Make it simple. Centered card on a split background (Image Left / Form Right).",
+    "DASHBOARD: Keep it clean. White cards on the Bone White background. Use the 'High Density' grid.",
+    "BOOKING FLOW: Focus on the user journey. Step 1: Service, Step 2: Staff, Step 3: Time. Don't overwhelm the user.",
+    "TESTING: Add 'data-testid' to all interactive elements."
+  ],
+  "universal_guidelines": [
+    "Avoid 'AI slop' - generic, centered, blue/gray designs.",
+    "Use 2-3x more spacing than typical.",
+    "Micro-animations are mandatory for all interactions.",
+    "Never use pure black (#000000). Use #1A1A1A.",
+    "Use 'sonner' for toasts.",
+    "Components must use named exports."
+  ]
+}
