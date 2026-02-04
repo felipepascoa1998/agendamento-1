@@ -1,9 +1,18 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
 import axios from "axios";
 import { API } from "../App";
+import { toast } from "sonner";
 import { 
   Calendar, 
   Clock, 
@@ -13,7 +22,11 @@ import {
   ChevronRight,
   Star,
   Phone,
-  MapPin
+  MapPin,
+  LogOut,
+  LayoutDashboard,
+  ClipboardList,
+  ChevronDown
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -21,13 +34,23 @@ export default function LandingPage() {
   const [tenant, setTenant] = useState(null);
   const [services, setServices] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchTenantData();
+    fetchData();
   }, []);
 
-  const fetchTenantData = async () => {
+  const fetchData = async () => {
     try {
+      // Check if user is logged in
+      try {
+        const authRes = await axios.get(`${API}/auth/me`, { withCredentials: true });
+        setUser(authRes.data);
+      } catch (e) {
+        // Not logged in, that's ok
+      }
+
       const [tenantRes, servicesRes, employeesRes] = await Promise.all([
         axios.get(`${API}/tenant`),
         axios.get(`${API}/services`),
@@ -38,6 +61,8 @@ export default function LandingPage() {
       setEmployees(employeesRes.data);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -46,7 +71,21 @@ export default function LandingPage() {
   };
 
   const handleAgendar = () => {
-    navigate("/login");
+    if (user) {
+      navigate("/agendar");
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${API}/auth/logout`, {}, { withCredentials: true });
+      setUser(null);
+      toast.success("Logout realizado com sucesso");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   return (
@@ -62,21 +101,98 @@ export default function LandingPage() {
               </span>
             </div>
             <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                onClick={handleLogin}
-                data-testid="nav-login-btn"
-                className="text-foreground hover:text-primary"
-              >
-                Entrar
-              </Button>
-              <Button 
-                onClick={handleAgendar}
-                data-testid="nav-agendar-btn"
-                className="bg-primary text-primary-foreground rounded-full px-6 hover:bg-primary/90 transition-all hover:scale-105"
-              >
-                Agendar
-              </Button>
+              {user ? (
+                // User is logged in - show profile dropdown
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button 
+                      className="flex items-center gap-3 p-2 rounded-full hover:bg-muted transition-colors"
+                      data-testid="user-menu-trigger"
+                    >
+                      <Avatar className="w-9 h-9">
+                        <AvatarImage src={user.picture} alt={user.name} />
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {user.name?.charAt(0) || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="hidden md:block text-sm font-medium text-foreground">
+                        {user.name?.split(' ')[0]}
+                      </span>
+                      <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <div className="px-3 py-2 border-b border-muted">
+                      <p className="text-sm font-medium text-foreground">{user.name}</p>
+                      <p className="text-xs text-muted-foreground">{user.email}</p>
+                      <p className="text-xs text-primary mt-1 capitalize">
+                        {user.role === "admin" ? "Administrador" : "Cliente"}
+                      </p>
+                    </div>
+                    
+                    {user.role === "admin" ? (
+                      <>
+                        <DropdownMenuItem 
+                          onClick={() => navigate("/admin")}
+                          className="cursor-pointer"
+                          data-testid="go-to-admin"
+                        >
+                          <LayoutDashboard className="w-4 h-4 mr-2" />
+                          Painel Admin
+                        </DropdownMenuItem>
+                      </>
+                    ) : (
+                      <>
+                        <DropdownMenuItem 
+                          onClick={() => navigate("/agendar")}
+                          className="cursor-pointer"
+                          data-testid="go-to-agendar"
+                        >
+                          <Calendar className="w-4 h-4 mr-2" />
+                          Agendar Horário
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => navigate("/meus-agendamentos")}
+                          className="cursor-pointer"
+                          data-testid="go-to-agendamentos"
+                        >
+                          <ClipboardList className="w-4 h-4 mr-2" />
+                          Meus Agendamentos
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={handleLogout}
+                      data-testid="logout-btn"
+                      className="text-destructive focus:text-destructive cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sair
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                // User is not logged in
+                <>
+                  <Button 
+                    variant="ghost" 
+                    onClick={handleLogin}
+                    data-testid="nav-login-btn"
+                    className="text-foreground hover:text-primary"
+                  >
+                    Entrar
+                  </Button>
+                  <Button 
+                    onClick={handleAgendar}
+                    data-testid="nav-agendar-btn"
+                    className="bg-primary text-primary-foreground rounded-full px-6 hover:bg-primary/90 transition-all hover:scale-105"
+                  >
+                    Agendar
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -102,7 +218,7 @@ export default function LandingPage() {
                   data-testid="hero-agendar-btn"
                   className="bg-primary text-primary-foreground rounded-full px-8 py-6 text-lg font-medium transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
                 >
-                  Agendar Agora
+                  {user ? "Agendar Agora" : "Agendar Agora"}
                   <ChevronRight className="ml-2 w-5 h-5" />
                 </Button>
                 <Button 
@@ -244,7 +360,7 @@ export default function LandingPage() {
                 ))}
               </div>
               <p className="mt-8 text-muted-foreground">
-                Faça login para ver todos os serviços disponíveis
+                {user ? "Cadastre serviços no painel admin" : "Faça login para ver todos os serviços disponíveis"}
               </p>
             </div>
           )}
