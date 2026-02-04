@@ -1034,6 +1034,256 @@ async def get_revenue_report(
         "date_to": date_to
     }
 
+# ============== EMAIL ROUTES ==============
+
+async def send_email_async(to_email: str, subject: str, html_content: str):
+    """Send email asynchronously using Resend"""
+    if not RESEND_API_KEY:
+        logger.warning("RESEND_API_KEY not configured, skipping email")
+        return None
+    
+    params = {
+        "from": SENDER_EMAIL,
+        "to": [to_email],
+        "subject": subject,
+        "html": html_content
+    }
+    
+    try:
+        email = await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Email sent to {to_email}: {email.get('id')}")
+        return email
+    except Exception as e:
+        logger.error(f"Failed to send email to {to_email}: {str(e)}")
+        return None
+
+def get_client_reminder_email(appointment: dict, tenant_name: str) -> str:
+    """Generate HTML email for client reminder"""
+    return f"""
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #2C4A3B 0%, #3d6350 100%); padding: 30px; border-radius: 12px 12px 0 0;">
+            <h1 style="color: white; margin: 0; font-size: 24px;">✨ Lembrete de Agendamento</h1>
+        </div>
+        <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e5e5; border-top: none; border-radius: 0 0 12px 12px;">
+            <p style="color: #333; font-size: 16px; margin-bottom: 20px;">
+                Olá <strong>{appointment.get('client_name', 'Cliente')}</strong>!
+            </p>
+            <p style="color: #666; font-size: 15px;">
+                Este é um lembrete do seu agendamento em <strong>{tenant_name}</strong>:
+            </p>
+            <div style="background: #f8f7f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px 0; color: #888;">📅 Data:</td>
+                        <td style="padding: 8px 0; color: #333; font-weight: 600;">{appointment.get('date', '')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #888;">⏰ Horário:</td>
+                        <td style="padding: 8px 0; color: #333; font-weight: 600;">{appointment.get('time', '')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #888;">💇 Serviço:</td>
+                        <td style="padding: 8px 0; color: #333; font-weight: 600;">{appointment.get('service_name', '')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #888;">👤 Profissional:</td>
+                        <td style="padding: 8px 0; color: #333; font-weight: 600;">{appointment.get('employee_name', '')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #888;">💰 Valor:</td>
+                        <td style="padding: 8px 0; color: #2C4A3B; font-weight: 600;">R$ {appointment.get('service_price', 0):.2f}</td>
+                    </tr>
+                </table>
+            </div>
+            <p style="color: #666; font-size: 14px;">
+                Caso precise reagendar ou cancelar, acesse nosso sistema online.
+            </p>
+            <p style="color: #888; font-size: 13px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+                {tenant_name} - Sistema de Agendamentos
+            </p>
+        </div>
+    </div>
+    """
+
+def get_employee_reminder_email(appointment: dict, tenant_name: str) -> str:
+    """Generate HTML email for employee reminder"""
+    return f"""
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #2C4A3B 0%, #3d6350 100%); padding: 30px; border-radius: 12px 12px 0 0;">
+            <h1 style="color: white; margin: 0; font-size: 24px;">📋 Lembrete de Atendimento</h1>
+        </div>
+        <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e5e5; border-top: none; border-radius: 0 0 12px 12px;">
+            <p style="color: #333; font-size: 16px; margin-bottom: 20px;">
+                Olá <strong>{appointment.get('employee_name', 'Profissional')}</strong>!
+            </p>
+            <p style="color: #666; font-size: 15px;">
+                Você tem um atendimento agendado:
+            </p>
+            <div style="background: #f8f7f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px 0; color: #888;">📅 Data:</td>
+                        <td style="padding: 8px 0; color: #333; font-weight: 600;">{appointment.get('date', '')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #888;">⏰ Horário:</td>
+                        <td style="padding: 8px 0; color: #333; font-weight: 600;">{appointment.get('time', '')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #888;">💇 Serviço:</td>
+                        <td style="padding: 8px 0; color: #333; font-weight: 600;">{appointment.get('service_name', '')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #888;">👤 Cliente:</td>
+                        <td style="padding: 8px 0; color: #333; font-weight: 600;">{appointment.get('client_name', '')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #888;">📧 Email:</td>
+                        <td style="padding: 8px 0; color: #333;">{appointment.get('client_email', '')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #888;">📱 Telefone:</td>
+                        <td style="padding: 8px 0; color: #333;">{appointment.get('client_phone', '-')}</td>
+                    </tr>
+                </table>
+            </div>
+            <p style="color: #888; font-size: 13px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+                {tenant_name} - Sistema de Agendamentos
+            </p>
+        </div>
+    </div>
+    """
+
+class SendReminderRequest(BaseModel):
+    appointment_id: str
+    send_to_client: bool = True
+    send_to_employee: bool = True
+
+@api_router.post("/appointments/{appointment_id}/send-reminder")
+async def send_appointment_reminder(
+    request: Request,
+    appointment_id: str,
+    send_to_client: bool = True,
+    send_to_employee: bool = True
+):
+    """Send reminder emails for an appointment (admin only)"""
+    user = await require_admin(request)
+    
+    if not RESEND_API_KEY:
+        raise HTTPException(status_code=400, detail="Serviço de email não configurado. Configure RESEND_API_KEY.")
+    
+    # Get appointment
+    appointment = await db.appointments.find_one(
+        {"appointment_id": appointment_id, "tenant_id": user.tenant_id},
+        {"_id": 0}
+    )
+    
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Agendamento não encontrado")
+    
+    # Get tenant info
+    tenant = await db.tenants.find_one({"tenant_id": user.tenant_id}, {"_id": 0})
+    tenant_name = tenant.get("name", "Salão") if tenant else "Salão"
+    
+    results = {"client": None, "employee": None}
+    
+    # Send to client
+    if send_to_client and appointment.get("client_email"):
+        client_html = get_client_reminder_email(appointment, tenant_name)
+        client_result = await send_email_async(
+            appointment["client_email"],
+            f"Lembrete: Agendamento em {tenant_name} - {appointment.get('date')} às {appointment.get('time')}",
+            client_html
+        )
+        results["client"] = "sent" if client_result else "failed"
+    
+    # Send to employee
+    if send_to_employee:
+        employee = await db.employees.find_one(
+            {"employee_id": appointment.get("employee_id")},
+            {"_id": 0}
+        )
+        if employee and employee.get("email"):
+            employee_html = get_employee_reminder_email(appointment, tenant_name)
+            employee_result = await send_email_async(
+                employee["email"],
+                f"Lembrete: Atendimento - {appointment.get('client_name')} - {appointment.get('date')} às {appointment.get('time')}",
+                employee_html
+            )
+            results["employee"] = "sent" if employee_result else "failed"
+        else:
+            results["employee"] = "no_email"
+    
+    return {
+        "message": "Lembretes processados",
+        "results": results
+    }
+
+@api_router.post("/appointments/send-daily-reminders")
+async def send_daily_reminders(request: Request, date: Optional[str] = None):
+    """Send reminders for all appointments on a specific date (admin only)"""
+    user = await require_admin(request)
+    
+    if not RESEND_API_KEY:
+        raise HTTPException(status_code=400, detail="Serviço de email não configurado")
+    
+    # Default to tomorrow
+    if not date:
+        tomorrow = datetime.now(timezone.utc) + timedelta(days=1)
+        date = tomorrow.strftime("%Y-%m-%d")
+    
+    # Get all appointments for the date
+    appointments = await db.appointments.find({
+        "tenant_id": user.tenant_id,
+        "date": date,
+        "status": {"$in": ["pending", "confirmed"]}
+    }, {"_id": 0}).to_list(100)
+    
+    # Get tenant info
+    tenant = await db.tenants.find_one({"tenant_id": user.tenant_id}, {"_id": 0})
+    tenant_name = tenant.get("name", "Salão") if tenant else "Salão"
+    
+    sent_count = 0
+    failed_count = 0
+    
+    for appt in appointments:
+        # Send to client
+        if appt.get("client_email"):
+            client_html = get_client_reminder_email(appt, tenant_name)
+            result = await send_email_async(
+                appt["client_email"],
+                f"Lembrete: Agendamento amanhã em {tenant_name} - {appt.get('time')}",
+                client_html
+            )
+            if result:
+                sent_count += 1
+            else:
+                failed_count += 1
+        
+        # Send to employee
+        employee = await db.employees.find_one(
+            {"employee_id": appt.get("employee_id")},
+            {"_id": 0}
+        )
+        if employee and employee.get("email"):
+            employee_html = get_employee_reminder_email(appt, tenant_name)
+            result = await send_email_async(
+                employee["email"],
+                f"Lembrete: Atendimento amanhã - {appt.get('client_name')} às {appt.get('time')}",
+                employee_html
+            )
+            if result:
+                sent_count += 1
+            else:
+                failed_count += 1
+    
+    return {
+        "message": f"Lembretes enviados para {date}",
+        "appointments_count": len(appointments),
+        "emails_sent": sent_count,
+        "emails_failed": failed_count
+    }
+
 # ============== ROOT ROUTE ==============
 
 @api_router.get("/")
