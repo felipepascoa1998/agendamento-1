@@ -1,34 +1,173 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Salon Scheduler SaaS - Custom Styles */
+
+/* Base animations */
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-out forwards;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.animate-slideIn {
+    animation: slideIn 0.4s ease-out forwards;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.animate-scaleIn {
+    animation: scaleIn 0.3s ease-out forwards;
 }
 
-.App-link {
-    color: #61dafb;
-}
-
-@keyframes App-logo-spin {
+@keyframes fadeIn {
     from {
-        transform: rotate(0deg);
+        opacity: 0;
+        transform: translateY(10px);
     }
     to {
-        transform: rotate(360deg);
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Staggered animations */
+.stagger-1 { animation-delay: 0.1s; opacity: 0; }
+.stagger-2 { animation-delay: 0.2s; opacity: 0; }
+.stagger-3 { animation-delay: 0.3s; opacity: 0; }
+.stagger-4 { animation-delay: 0.4s; opacity: 0; }
+.stagger-5 { animation-delay: 0.5s; opacity: 0; }
+
+/* Custom button hover effects */
+.btn-primary-custom {
+    @apply bg-primary text-primary-foreground rounded-full px-8 py-4 font-medium;
+    @apply transition-all duration-300;
+    @apply hover:scale-105 active:scale-95;
+    @apply shadow-lg hover:shadow-xl;
+}
+
+.btn-secondary-custom {
+    @apply bg-secondary text-secondary-foreground rounded-full px-6 py-3 font-medium;
+    @apply transition-all duration-300;
+    @apply hover:bg-secondary/80;
+}
+
+.btn-outline-custom {
+    @apply border-2 border-primary text-primary rounded-full px-6 py-3 font-medium;
+    @apply transition-all duration-300;
+    @apply hover:bg-primary hover:text-white;
+}
+
+/* Card styles */
+.card-custom {
+    @apply bg-card border border-muted shadow-sm rounded-xl p-6;
+    @apply transition-all duration-300;
+    @apply hover:shadow-md hover:-translate-y-1;
+}
+
+/* Glass effect */
+.glass-effect {
+    @apply backdrop-blur-md bg-background/80;
+}
+
+/* Input focus styles */
+.input-custom {
+    @apply border-muted focus:border-primary focus:ring-primary/20;
+    @apply transition-colors duration-200;
+}
+
+/* Calendar custom styles */
+.rdp {
+    --rdp-accent-color: hsl(var(--primary));
+    --rdp-background-color: hsl(var(--primary) / 0.1);
+}
+
+.rdp-day_selected {
+    background-color: hsl(var(--primary)) !important;
+    color: white !important;
+}
+
+.rdp-day_today {
+    color: hsl(var(--primary)) !important;
+    font-weight: 600;
+}
+
+/* Sidebar active state */
+.sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg;
+    @apply transition-all duration-200;
+    @apply text-muted-foreground hover:text-foreground hover:bg-muted;
+}
+
+.sidebar-link.active {
+    @apply bg-primary text-primary-foreground;
+}
+
+/* Hero section gradient */
+.hero-gradient {
+    background: radial-gradient(circle at 50% 50%, rgba(212, 163, 115, 0.15), transparent 70%);
+}
+
+/* Table row hover */
+.table-row-hover {
+    @apply transition-colors duration-200;
+    @apply hover:bg-muted/50;
+}
+
+/* Badge variants */
+.badge-pending {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-200;
+}
+
+.badge-confirmed {
+    @apply bg-blue-100 text-blue-800 border-blue-200;
+}
+
+.badge-completed {
+    @apply bg-green-100 text-green-800 border-green-200;
+}
+
+.badge-cancelled {
+    @apply bg-red-100 text-red-800 border-red-200;
+}
+
+/* Scroll reveal animation */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Loading skeleton pulse */
+.skeleton-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
     }
 }
