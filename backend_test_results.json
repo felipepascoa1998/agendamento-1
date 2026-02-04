@@ -1,0 +1,75 @@
+{
+  "total_tests": 12,
+  "passed_tests": 12,
+  "failed_tests": 0,
+  "success_rate": 100.0,
+  "test_results": [
+    {
+      "name": "Root API endpoint",
+      "success": true,
+      "details": ""
+    },
+    {
+      "name": "Tenant info endpoint",
+      "success": true,
+      "details": ""
+    },
+    {
+      "name": "Services endpoint (public)",
+      "success": true,
+      "details": ""
+    },
+    {
+      "name": "Employees endpoint (public)",
+      "success": true,
+      "details": ""
+    },
+    {
+      "name": "Appointments endpoint (public)",
+      "success": true,
+      "details": ""
+    },
+    {
+      "name": "Auth/me without token (401 expected)",
+      "success": true,
+      "details": ""
+    },
+    {
+      "name": "Create service without auth (401 expected)",
+      "success": true,
+      "details": ""
+    },
+    {
+      "name": "Create employee without auth (401 expected)",
+      "success": true,
+      "details": ""
+    },
+    {
+      "name": "Blocked times without auth (401 expected)",
+      "success": true,
+      "details": ""
+    },
+    {
+      "name": "Reports without auth (401 expected)",
+      "success": true,
+      "details": ""
+    },
+    {
+      "name": "Available slots endpoint structure",
+      "success": true,
+      "details": ""
+    },
+    {
+      "name": "Invalid endpoint returns 404",
+      "success": true,
+      "details": ""
+    }
+  ],
+  "tenant_data": {
+    "tenant_id": "tenant_c7984d4ef39e",
+    "name": "Salonscheduler 6",
+    "slug": "salonscheduler-6",
+    "created_at": "2026-02-04T17:20:07.269279+00:00",
+    "is_active": true
+  }
+}
