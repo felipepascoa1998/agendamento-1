@@ -387,6 +387,18 @@ export default function AdminAgenda() {
             </div>
           )}
           <DialogFooter className="flex-col gap-2 sm:flex-row">
+            {(selectedAppointment?.status === "pending" || selectedAppointment?.status === "confirmed") && (
+              <Button 
+                variant="outline"
+                onClick={() => sendReminder(selectedAppointment.appointment_id)}
+                disabled={sendingReminder}
+                data-testid="send-reminder-btn"
+                className="text-primary border-primary hover:bg-primary hover:text-white"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                {sendingReminder ? "Enviando..." : "Enviar Lembrete"}
+              </Button>
+            )}
             {selectedAppointment?.status === "pending" && (
               <Button 
                 onClick={() => updateStatus(selectedAppointment.appointment_id, "confirmed")}
