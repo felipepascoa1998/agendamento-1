@@ -36,7 +36,9 @@ import {
   X,
   RefreshCw,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Send,
+  Bell
 } from "lucide-react";
 
 export default function AdminAgenda() {
@@ -48,6 +50,7 @@ export default function AdminAgenda() {
   const [loading, setLoading] = useState(true);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [rescheduleDialog, setRescheduleDialog] = useState(false);
+  const [sendingReminder, setSendingReminder] = useState(false);
   const [rescheduleDate, setRescheduleDate] = useState("");
   const [rescheduleTime, setRescheduleTime] = useState("");
 
