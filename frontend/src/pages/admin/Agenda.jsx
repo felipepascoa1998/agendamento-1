@@ -128,6 +128,50 @@ export default function AdminAgenda() {
     }
   };
 
+  const sendReminder = async (appointmentId) => {
+    setSendingReminder(true);
+    try {
+      const response = await axios.post(
+        `${API}/appointments/${appointmentId}/send-reminder?send_to_client=true&send_to_employee=true`,
+        {},
+        { withCredentials: true }
+      );
+      
+      const results = response.data.results;
+      let message = "Lembretes enviados: ";
+      if (results.client === "sent") message += "Cliente ✓ ";
+      if (results.employee === "sent") message += "Funcionário ✓";
+      if (results.client === "failed" || results.employee === "failed") {
+        toast.warning(message + " (alguns falharam)");
+      } else if (results.employee === "no_email") {
+        toast.success("Lembrete enviado ao cliente (funcionário sem email)");
+      } else {
+        toast.success(message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Erro ao enviar lembrete");
+    } finally {
+      setSendingReminder(false);
+    }
+  };
+
+  const sendDailyReminders = async () => {
+    const dateStr = format(selectedDate, "yyyy-MM-dd");
+    setSendingReminder(true);
+    try {
+      const response = await axios.post(
+        `${API}/appointments/send-daily-reminders?date=${dateStr}`,
+        {},
+        { withCredentials: true }
+      );
+      toast.success(`${response.data.emails_sent} lembretes enviados para ${response.data.appointments_count} agendamentos`);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Erro ao enviar lembretes");
+    } finally {
+      setSendingReminder(false);
+    }
+  };
+
   const getStatusBadge = (status) => {
     const variants = {
       pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
