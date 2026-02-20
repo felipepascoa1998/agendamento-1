@@ -267,9 +267,24 @@ export default function AdminAgenda() {
               <Button variant="outline" size="icon" onClick={() => navigateDate(-1)}>
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              <h2 className="font-serif text-lg font-semibold text-foreground">
-                {format(selectedDate, "EEEE, d 'de' MMMM", { locale: ptBR })}
-              </h2>
+              <div className="flex items-center gap-4">
+                <h2 className="font-serif text-lg font-semibold text-foreground">
+                  {format(selectedDate, "EEEE, d 'de' MMMM", { locale: ptBR })}
+                </h2>
+                {filteredAppointments.length > 0 && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={sendDailyReminders}
+                    disabled={sendingReminder}
+                    data-testid="send-all-reminders-btn"
+                    className="text-primary border-primary hover:bg-primary hover:text-white"
+                  >
+                    <Bell className="w-4 h-4 mr-2" />
+                    {sendingReminder ? "Enviando..." : "Enviar Lembretes"}
+                  </Button>
+                )}
+              </div>
               <Button variant="outline" size="icon" onClick={() => navigateDate(1)}>
                 <ChevronRight className="w-4 h-4" />
               </Button>
