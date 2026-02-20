@@ -367,53 +367,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Team */}
-      {employees.length > 0 && (
-        <section className="py-20 px-6 md:px-12 bg-secondary/30">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
-                Nossa Equipe
-              </h2>
-              <p className="mt-4 text-muted-foreground">
-                Profissionais dedicados a realçar sua beleza
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {employees.map((emp, idx) => (
-                <Card 
-                  key={emp.employee_id}
-                  data-testid={`employee-card-${idx}`}
-                  className="bg-card border-none shadow-sm hover:shadow-md transition-all duration-300 text-center"
-                >
-                  <CardContent className="p-6">
-                    <div className="w-20 h-20 rounded-full bg-muted mx-auto mb-4 overflow-hidden">
-                      {emp.photo_url ? (
-                        <img 
-                          src={emp.photo_url} 
-                          alt={emp.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-primary/10">
-                          <Users className="w-8 h-8 text-primary" />
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="font-serif text-lg font-semibold text-foreground">
-                      {emp.name}
-                    </h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Profissional
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* CTA */}
       <section className="py-20 px-6 md:px-12">
         <div className="max-w-4xl mx-auto text-center">
