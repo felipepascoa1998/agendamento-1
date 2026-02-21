@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 
 class SalonAPITester:
-    def __init__(self, base_url: str = "https://salonscheduler-6.preview.emergentagent.com"):
+    def __init__(self, base_url: str = "http://localhost:8000"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.session_token = None
@@ -258,7 +258,7 @@ def main():
     
     # Save detailed results
     summary = tester.get_test_summary()
-    with open('/app/backend_test_results.json', 'w') as f:
+    with open('backend_test_results.json', 'w') as f:
         json.dump(summary, f, indent=2, default=str)
     
     return exit_code
