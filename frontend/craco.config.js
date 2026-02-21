@@ -71,11 +71,11 @@ const webpackConfig = {
 };
 
 // Only add babel metadata plugin during dev server
-if (config.enableVisualEdits && babelMetadataPlugin) {
-  webpackConfig.babel = {
-    plugins: [babelMetadataPlugin],
-  };
-}
+// if (config.enableVisualEdits && babelMetadataPlugin) {
+//   webpackConfig.babel = {
+//     plugins: [babelMetadataPlugin],
+//   };
+// }
 
 webpackConfig.devServer = (devServerConfig) => {
   // Apply visual edits dev server setup only if enabled

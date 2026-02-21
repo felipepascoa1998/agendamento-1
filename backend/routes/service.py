@@ -11,8 +11,8 @@ router = APIRouter(prefix="/services")
 @router.get("/", response_model=List[Service])
 async def list_services_route(request: Request):
     db = request.app.state.db
-    tenant_slug = get_tenant_from_host(request)
-    return await list_services(db, tenant_slug)
+    user = await require_admin(request, db)
+    return await list_all_services(db, user.tenant_id)
 
 @router.get("/all", response_model=List[Service])
 async def list_all_services_route(request: Request):

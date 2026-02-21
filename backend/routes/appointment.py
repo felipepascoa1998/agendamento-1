@@ -13,12 +13,8 @@ router = APIRouter(prefix="/appointments")
 @router.get("/")
 async def list_appointments_route(request: Request, status: Optional[str] = None, date_from: Optional[str] = None, date_to: Optional[str] = None, employee_id: Optional[str] = None):
     db = request.app.state.db
-    tenant_slug = get_tenant_from_host(request)
-    tenant = await db.tenants.find_one({"slug": tenant_slug}, {"_id": 0})
-    if not tenant:
-        return []
-    query = {"tenant_id": tenant["tenant_id"]}
-    user = await get_current_user(request, db)
+    user = await require_admin(request, db)
+    query = {"tenant_id": user.tenant_id}
     if user and getattr(user, "role", None) != "admin":
         query["client_user_id"] = user.user_id
     if status:

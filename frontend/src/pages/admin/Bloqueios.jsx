@@ -1,3 +1,4 @@
+import { Plus, Trash2, Clock, Calendar as CalendarIcon, Ban, Pencil } from "lucide-react";
 import { useState, useEffect } from "react";
 import { AdminLayout } from "../../components/AdminLayout";
 import { Card, CardContent } from "../../components/ui/card";
@@ -34,13 +35,7 @@ import { API } from "../../App";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import {
-  Plus,
-  Trash2,
-  Clock,
-  Calendar as CalendarIcon,
-  Ban
-} from "lucide-react";
+
 
 export default function AdminBloqueios() {
   const [blockedTimes, setBlockedTimes] = useState([]);
@@ -55,6 +50,7 @@ export default function AdminBloqueios() {
     end_time: "",
     reason: ""
   });
+  const [editingBlock, setEditingBlock] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -67,6 +63,7 @@ export default function AdminBloqueios() {
         axios.get(`${API}/employees/all`, { withCredentials: true })
       ]);
       setBlockedTimes(blockedRes.data);
+      console.log('BlockedTimes:', blockedRes.data);
       setEmployees(employeesRes.data);
     } catch (error) {
       toast.error("Erro ao carregar dados");
@@ -76,14 +73,20 @@ export default function AdminBloqueios() {
   };
 
   const openDialog = () => {
+    setEditingBlock(null);
+    setDialogOpen(true);
+  };
+
+  const openEditDialog = (block) => {
     setFormData({
-      employee_id: "",
-      date: format(new Date(), "yyyy-MM-dd"),
-      is_whole_day: true,
-      start_time: "",
-      end_time: "",
-      reason: ""
+      employee_id: block.employee_id,
+      date: block.date,
+      is_whole_day: block.is_whole_day,
+      start_time: block.start_time || "",
+      end_time: block.end_time || "",
+      reason: block.reason || ""
     });
+    setEditingBlock(block);
     setDialogOpen(true);
   };
 
@@ -107,12 +110,17 @@ export default function AdminBloqueios() {
         reason: formData.reason || null
       };
 
-      await axios.post(`${API}/blocked-times`, payload, { withCredentials: true });
-      toast.success("Bloqueio criado com sucesso");
+      if (editingBlock) {
+        await axios.put(`${API}/blocked-times/${editingBlock.blocked_id}`, payload, { withCredentials: true });
+        toast.success("Bloqueio atualizado com sucesso");
+      } else {
+        await axios.post(`${API}/blocked-times`, payload, { withCredentials: true });
+        toast.success("Bloqueio criado com sucesso");
+      }
       fetchData();
       setDialogOpen(false);
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Erro ao criar bloqueio");
+      toast.error(error.response?.data?.detail || (editingBlock ? "Erro ao atualizar bloqueio" : "Erro ao criar bloqueio"));
     }
   };
 
@@ -214,6 +222,15 @@ export default function AdminBloqueios() {
                         </p>
                       </TableCell>
                       <TableCell className="text-right">
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => openEditDialog(block)}
+                          className="text-primary hover:text-primary"
+                          data-testid={`edit-block-${idx}`}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
                         <Button 
                           variant="ghost" 
                           size="icon"
@@ -329,7 +346,7 @@ export default function AdminBloqueios() {
               Cancelar
             </Button>
             <Button onClick={handleSubmit} data-testid="save-block-btn">
-              Criar Bloqueio
+                {editingBlock ? "Salvar Alterações" : "Criar Bloqueio"}
             </Button>
           </DialogFooter>
         </DialogContent>
